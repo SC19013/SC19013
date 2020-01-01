@@ -1,0 +1,14 @@
+Package: SC19013
+Type: Package
+Title: the final project for 'Statistical Computing' course
+Version: 1.0
+Date: 2019-12-30
+Author: 19013
+Maintainer: Honghong Xu <hhongxu@mail.ustc.edu.cn>
+Description: the final project for 'Statistical Computing' course of 19013.
+License: GPL (>= 2)
+Imports: Rcpp (>= 1.0.3),boot
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
+LinkingTo: Rcpp
+RoxygenNote: 7.0.2
