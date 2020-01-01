@@ -19,6 +19,5 @@ Generate samples from Rayleigh distribution
 }
 \examples{
 n <- 100
-sample <- Rayleigh(n,2)
-head(sample,10)
+sample <- Rl(n,2)
 }

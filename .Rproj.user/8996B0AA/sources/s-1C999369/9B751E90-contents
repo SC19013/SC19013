@@ -6,6 +6,7 @@
 #' @examples
 #' n <- 100
 #' sample <- Rl(n,2)
+#' head(sample,10)
 #' @export
 Rl <- function(n,sigma){
   u <- runif(floor(n/2))
