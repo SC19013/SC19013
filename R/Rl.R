@@ -8,10 +8,10 @@
 #' sample <- Rl(n,2)
 #' @export
 Rl <- function(n,sigma){
-  u <- runif(floor(n/2))
-  v <- 1-u
-  u <- c(u,v)
-  rd <- numeric(length(u))
-  rd <- (-(2*sigma^2)*(log(1-u)))^(1/2)
+  r1 <- runif(n/2)
+  r2 <- 1-r1
+  r <- c(r1,r2)
+  rd <- numeric(length(r))
+  rd <- (-(2*sigma^2)*(log(1-r)))^(1/2)
   return(rd)
 }
