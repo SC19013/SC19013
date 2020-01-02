@@ -1,4 +1,4 @@
-#' @title the empirical coverage rates for the sample mean
+#' @title the empirical coverage rates for the standard normal bootstrap confidence interval
 #' @description  a Monte Carlo study to estimate the coverage probabilities of the standard normal bootstrap confidence interval
 #' @param theta the skewness of normal distribution
 #' @param n the size of each sample you want
@@ -20,7 +20,7 @@ Cpnor <- function(theta,n,m){
   ci.norm <- matrix(NA,m,2)
   for(i in 1:m){
   x <-rnorm(n)
-  de <- boot(data=x,statistic=boot.sk, R = 999)
+  de <- boot(data=x,statistic=boot.sk, R = 200)
   ci <- boot.ci(de,type=c("norm"))
   ci.norm[i,]<-ci$norm[2:3]
 }

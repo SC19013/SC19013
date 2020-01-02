@@ -10,23 +10,42 @@ vignette: >
 ---
 
 ## overview
-__SC19017__ is a simple R package contain two fuctions. The first function called Rl is to generate samples from  Rayleigh distribution by using antithetic variables. The second function called Cpnor is a Monte Carlo study to estimate the coverage probabilities of the standard normal bootstrap confidence interval.
+__SC19017__ is a simple R package contain two fuctions. The first function called Rl is to generate samples from  Rayleigh distribution by using Transformation methods. The second function called Cpnor is a Monte Carlo study to estimate the coverage probabilities of the standard normal bootstrap confidence interval.
 
 ## Function _Rl_ 
+* **n** the sample size.
+* **sigma** the parameter of Rayleigh distribution.
+* The function return a random sample of size n.
+
+The  Rayleigh Distribution is $f(x)=\frac x{\sigma^2}e^{-\frac {x^2} {2\sigma^2}}$
+
+if $x$~$exp(\lambda)$, we can get the pdf of $y=sqrt(x)$ is $f(y)=2\lambda y e^{-\lambda y^{2}}$.So we choose the $\lambda = -\frac 1 {2\sigma^2}$, we will get the Rayleigh Distribution by $y=sqrt(x)$. 
 
 The source R code for _Rl_ is as follows:
 ```{r}
 Rl <- function(n,sigma){
-  u <- runif(floor(n/2))
-  v <- 1-u
-  u <- c(u,v)
-  rd <- numeric(length(u))
-  rd <- (-(2*sigma^2)*(log(1-u)))^(1/2)
-  return(rd)
+   u <- rexp(n,rate=1/(2*sigma^2))
+   x <- u^{1/2}
+   return(x) 
 }
 ```
 
+We can compare the effect with histogram when sigma equals 1
+```{r}
+x <- Rl(1000,1) 
+hist(x, prob = TRUE, main = expression(f(x)==xe^{-(x^2)/2})) 
+y <- seq(0, 3, .001) 
+lines(y, y*exp(1)^{-(y^2)/2})
+```
+
 ## Function _Cpnor_ 
+* @description  a Monte Carlo study to estimate the coverage probabilities of the standard normal bootstrap confidence interval
+
+* **theta** the skewness of normal distribution
+* **n** the size of each sample you want
+* **m** the times of iteration you want
+* return a coverage probabilities between 0 and 1
+* use the package "boot"
 
 The source R code for _Cpnor_ is as follows:
 ```{r}
@@ -49,4 +68,11 @@ Cpnor <- function(theta,n,m){
 CP<-mean(ci.norm[,1]<=theta & ci.norm[,2]>=theta)
 return(CP)
 }
+```
+ 
+The example standard normal disrtribution will show the function.
+```{r}
+theta <- 0
+n <- 20; m <- 1000
+Cpnor(theta, n, m)
 ```

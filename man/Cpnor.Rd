@@ -2,7 +2,7 @@
 % Please edit documentation in R/Cpnor.R
 \name{Cpnor}
 \alias{Cpnor}
-\title{the empirical coverage rates for the sample mean}
+\title{the empirical coverage rates for the standard normal bootstrap confidence interval}
 \usage{
 Cpnor(theta, n, m)
 }

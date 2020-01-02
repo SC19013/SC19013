@@ -2,4 +2,5 @@
 
 export(Cpnor)
 export(Rl)
+export(rwme)
 import(boot)

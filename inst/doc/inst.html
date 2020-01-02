@@ -12,7 +12,7 @@
 
 <meta name="author" content="Honghong Xu" />
 
-<meta name="date" content="2020-01-01" />
+<meta name="date" content="2020-01-02" />
 
 <title>Introduction to SC19013</title>
 
@@ -303,48 +303,71 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Introduction to SC19013</h1>
 <h4 class="author">Honghong Xu</h4>
-<h4 class="date">2020-01-01</h4>
+<h4 class="date">2020-01-02</h4>
 
 
 
 <div id="overview" class="section level2">
 <h2>overview</h2>
-<p><strong>SC19017</strong> is a simple R package contain two fuctions. The first function called Rl is to generate samples from Rayleigh distribution by using antithetic variables. The second function called Cpnor is a Monte Carlo study to estimate the coverage probabilities of the standard normal bootstrap confidence interval.</p>
+<p><strong>SC19017</strong> is a simple R package contain two fuctions. The first function called Rl is to generate samples from Rayleigh distribution by using Transformation methods. The second function called Cpnor is a Monte Carlo study to estimate the coverage probabilities of the standard normal bootstrap confidence interval.</p>
 </div>
 <div id="function-rl" class="section level2">
 <h2>Function <em>Rl</em></h2>
+<ul>
+<li><strong>n</strong> the sample size.</li>
+<li><strong>sigma</strong> the parameter of Rayleigh distribution.</li>
+<li>The function return a random sample of size n.</li>
+</ul>
+<p>The Rayleigh Distribution is <span class="math inline">\(f(x)=\frac x{\sigma^2}e^{-\frac {x^2} {2\sigma^2}}\)</span></p>
+<p>if <span class="math inline">\(x\)</span>~<span class="math inline">\(exp(\lambda)\)</span>, we can get the pdf of <span class="math inline">\(y=sqrt(x)\)</span> is <span class="math inline">\(f(y)=2\lambda y e^{-\lambda y^{2}}\)</span>.So we choose the <span class="math inline">\(\lambda = -\frac 1 {2\sigma^2}\)</span>, we will get the Rayleigh Distribution by <span class="math inline">\(y=sqrt(x)\)</span>.</p>
 <p>The source R code for <em>Rl</em> is as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">Rl &lt;-<span class="st"> </span><span class="cf">function</span>(n,sigma){</a>
-<a class="sourceLine" id="cb1-2" title="2">  u &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="kw">floor</span>(n<span class="op">/</span><span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb1-3" title="3">  v &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span>u</a>
-<a class="sourceLine" id="cb1-4" title="4">  u &lt;-<span class="st"> </span><span class="kw">c</span>(u,v)</a>
-<a class="sourceLine" id="cb1-5" title="5">  rd &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">length</span>(u))</a>
-<a class="sourceLine" id="cb1-6" title="6">  rd &lt;-<span class="st"> </span>(<span class="op">-</span>(<span class="dv">2</span><span class="op">*</span>sigma<span class="op">^</span><span class="dv">2</span>)<span class="op">*</span>(<span class="kw">log</span>(<span class="dv">1</span><span class="op">-</span>u)))<span class="op">^</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb1-7" title="7">  <span class="kw">return</span>(rd)</a>
-<a class="sourceLine" id="cb1-8" title="8">}</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" title="2">   u &lt;-<span class="st"> </span><span class="kw">rexp</span>(n,<span class="dt">rate=</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>sigma<span class="op">^</span><span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb1-3" title="3">   x &lt;-<span class="st"> </span>u<span class="op">^</span>{<span class="dv">1</span><span class="op">/</span><span class="dv">2</span>}</a>
+<a class="sourceLine" id="cb1-4" title="4">   <span class="kw">return</span>(x) </a>
+<a class="sourceLine" id="cb1-5" title="5">}</a></code></pre></div>
+<p>We can compare the effect with histogram when sigma equals 1</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">x &lt;-<span class="st"> </span><span class="kw">Rl</span>(<span class="dv">1000</span>,<span class="dv">1</span>) </a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">hist</span>(x, <span class="dt">prob =</span> <span class="ot">TRUE</span>, <span class="dt">main =</span> <span class="kw">expression</span>(<span class="kw">f</span>(x)<span class="op">==</span>xe<span class="op">^</span>{<span class="op">-</span>(x<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="dv">2</span>})) </a>
+<a class="sourceLine" id="cb2-3" title="3">y &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">3</span>, <span class="fl">.001</span>) </a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="kw">lines</span>(y, y<span class="op">*</span><span class="kw">exp</span>(<span class="dv">1</span>)<span class="op">^</span>{<span class="op">-</span>(y<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="dv">2</span>})</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 </div>
 <div id="function-cpnor" class="section level2">
 <h2>Function <em>Cpnor</em></h2>
+<ul>
+<li><p><span class="citation">@description</span> a Monte Carlo study to estimate the coverage probabilities of the standard normal bootstrap confidence interval</p></li>
+<li><p><strong>theta</strong> the skewness of normal distribution</p></li>
+<li><p><strong>n</strong> the size of each sample you want</p></li>
+<li><p><strong>m</strong> the times of iteration you want</p></li>
+<li><p>return a coverage probabilities between 0 and 1</p></li>
+<li><p>use the package “boot”</p></li>
+</ul>
 <p>The source R code for <em>Cpnor</em> is as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">Cpnor &lt;-<span class="st"> </span><span class="cf">function</span>(theta,n,m){</a>
-<a class="sourceLine" id="cb2-2" title="2">  sk &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
-<a class="sourceLine" id="cb2-3" title="3">     xbar &lt;-<span class="st"> </span><span class="kw">mean</span>(x)</a>
-<a class="sourceLine" id="cb2-4" title="4">     m3 &lt;-<span class="st"> </span><span class="kw">mean</span>((x <span class="op">-</span><span class="st"> </span>xbar)<span class="op">^</span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb2-5" title="5">     m2 &lt;-<span class="st"> </span><span class="kw">mean</span>((x <span class="op">-</span><span class="st"> </span>xbar)<span class="op">^</span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb2-6" title="6">     <span class="kw">return</span>( m3 <span class="op">/</span><span class="st"> </span>m2<span class="op">^</span><span class="fl">1.5</span> )</a>
-<a class="sourceLine" id="cb2-7" title="7">   }</a>
-<a class="sourceLine" id="cb2-8" title="8">  <span class="kw">library</span>(boot)</a>
-<a class="sourceLine" id="cb2-9" title="9">  boot.sk &lt;-<span class="st"> </span><span class="cf">function</span>(x,i) <span class="kw">sk</span>(x[i])</a>
-<a class="sourceLine" id="cb2-10" title="10">  ci.norm &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>,m,<span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb2-11" title="11">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>m){</a>
-<a class="sourceLine" id="cb2-12" title="12">  x &lt;-<span class="kw">rnorm</span>(n)</a>
-<a class="sourceLine" id="cb2-13" title="13">  de &lt;-<span class="st"> </span><span class="kw">boot</span>(<span class="dt">data=</span>x,<span class="dt">statistic=</span>boot.sk, <span class="dt">R =</span> <span class="dv">999</span>)</a>
-<a class="sourceLine" id="cb2-14" title="14">  ci &lt;-<span class="st"> </span><span class="kw">boot.ci</span>(de,<span class="dt">type=</span><span class="kw">c</span>(<span class="st">&quot;norm&quot;</span>))</a>
-<a class="sourceLine" id="cb2-15" title="15">  ci.norm[i,]&lt;-ci<span class="op">$</span>norm[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>]</a>
-<a class="sourceLine" id="cb2-16" title="16">}</a>
-<a class="sourceLine" id="cb2-17" title="17">CP&lt;-<span class="kw">mean</span>(ci.norm[,<span class="dv">1</span>]<span class="op">&lt;=</span>theta <span class="op">&amp;</span><span class="st"> </span>ci.norm[,<span class="dv">2</span>]<span class="op">&gt;=</span>theta)</a>
-<a class="sourceLine" id="cb2-18" title="18"><span class="kw">return</span>(CP)</a>
-<a class="sourceLine" id="cb2-19" title="19">}</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">Cpnor &lt;-<span class="st"> </span><span class="cf">function</span>(theta,n,m){</a>
+<a class="sourceLine" id="cb3-2" title="2">  sk &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb3-3" title="3">     xbar &lt;-<span class="st"> </span><span class="kw">mean</span>(x)</a>
+<a class="sourceLine" id="cb3-4" title="4">     m3 &lt;-<span class="st"> </span><span class="kw">mean</span>((x <span class="op">-</span><span class="st"> </span>xbar)<span class="op">^</span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb3-5" title="5">     m2 &lt;-<span class="st"> </span><span class="kw">mean</span>((x <span class="op">-</span><span class="st"> </span>xbar)<span class="op">^</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb3-6" title="6">     <span class="kw">return</span>( m3 <span class="op">/</span><span class="st"> </span>m2<span class="op">^</span><span class="fl">1.5</span> )</a>
+<a class="sourceLine" id="cb3-7" title="7">   }</a>
+<a class="sourceLine" id="cb3-8" title="8">  <span class="kw">library</span>(boot)</a>
+<a class="sourceLine" id="cb3-9" title="9">  boot.sk &lt;-<span class="st"> </span><span class="cf">function</span>(x,i) <span class="kw">sk</span>(x[i])</a>
+<a class="sourceLine" id="cb3-10" title="10">  ci.norm &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>,m,<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb3-11" title="11">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>m){</a>
+<a class="sourceLine" id="cb3-12" title="12">  x &lt;-<span class="kw">rnorm</span>(n)</a>
+<a class="sourceLine" id="cb3-13" title="13">  de &lt;-<span class="st"> </span><span class="kw">boot</span>(<span class="dt">data=</span>x,<span class="dt">statistic=</span>boot.sk, <span class="dt">R =</span> <span class="dv">999</span>)</a>
+<a class="sourceLine" id="cb3-14" title="14">  ci &lt;-<span class="st"> </span><span class="kw">boot.ci</span>(de,<span class="dt">type=</span><span class="kw">c</span>(<span class="st">&quot;norm&quot;</span>))</a>
+<a class="sourceLine" id="cb3-15" title="15">  ci.norm[i,]&lt;-ci<span class="op">$</span>norm[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>]</a>
+<a class="sourceLine" id="cb3-16" title="16">}</a>
+<a class="sourceLine" id="cb3-17" title="17">CP&lt;-<span class="kw">mean</span>(ci.norm[,<span class="dv">1</span>]<span class="op">&lt;=</span>theta <span class="op">&amp;</span><span class="st"> </span>ci.norm[,<span class="dv">2</span>]<span class="op">&gt;=</span>theta)</a>
+<a class="sourceLine" id="cb3-18" title="18"><span class="kw">return</span>(CP)</a>
+<a class="sourceLine" id="cb3-19" title="19">}</a></code></pre></div>
+<p>The example standard normal disrtribution will show the function.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">theta &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb4-2" title="2">n &lt;-<span class="st"> </span><span class="dv">20</span>; m &lt;-<span class="st"> </span><span class="dv">1000</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="kw">Cpnor</span>(theta, n, m)</a></code></pre></div>
+<pre><code>## [1] 0.893</code></pre>
 </div>
 
 

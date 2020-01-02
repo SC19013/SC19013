@@ -8,6 +8,7 @@ Maintainer: Honghong Xu <hhongxu@mail.ustc.edu.cn>
 Description: the final project for 'Statistical Computing' course of 19013.
 License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.3),boot
+Encoding: UTF-8
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 LinkingTo: Rcpp
