@@ -10,27 +10,33 @@ using namespace Rcpp;
 //' @examples
 //' \dontrun{
 //' laplace<-function(x) return(1/2*exp(-abs(x)))
-//' lC <- rwme(1,25,1000);
-//' plot(1:1000,lC,type='l')
+//' lC <- randomwalkC(1,25,1000);
 //' }
 //' @export
 // [[Rcpp::export]]
-NumericMatrix rwme(double sigma,double xo,int N){
+NumericMatrix randomwalkC(double sigma,double x0,int N){
   NumericMatrix x(N,2);
-  x(0,0) = xo; 
-  x(1,0) = 1;
+  x(0,0) = x0; 
   NumericVector u = runif(N); 
   for (int i = 1; i < N ;i++){ 
     double y = as<double>(rnorm(1, x(i-1,0), sigma));
     double t = exp(-abs(y))/exp(-abs(x(i-1,0)));
-    if (u[i] > t){
+    if (u[i] <= t){
       x(i,0) = x(i-1,0); 
-      x(i,1) = 0;
+      x(i,1) = 1;
     }
     else{ 
       x(i,0) = y;
-      x(i,1) = 1;} 
+      x(i,1) = 0;} 
   };
   return x;
 }
 
+// You can include R code blocks in C++ files processed with sourceCpp
+// (useful for testing and development). The R code will be automatically 
+// run after the compilation.
+//
+
+/*** R
+timesTwo(42)
+*/

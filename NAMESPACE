@@ -2,5 +2,5 @@
 
 export(Cpnor)
 export(Rl)
-export(rwme)
+export(randomwalkC)
 import(boot)

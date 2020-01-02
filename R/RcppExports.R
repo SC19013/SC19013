@@ -10,11 +10,10 @@
 #' @examples
 #' \dontrun{
 #' laplace<-function(x) return(1/2*exp(-abs(x)))
-#' lC <- rwme(1,25,1000);
-#' plot(1:1000,lC,type='l')
+#' lC <- randomwalkC(1,25,1000);
 #' }
 #' @export
-rwme <- function(sigma, xo, N) {
-    .Call('_SC19013_rwme', PACKAGE = 'SC19013', sigma, xo, N)
+randomwalkC <- function(sigma, x0, N) {
+    .Call('_SC19013_randomwalkC', PACKAGE = 'SC19013', sigma, x0, N)
 }
 

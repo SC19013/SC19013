@@ -5,22 +5,22 @@
 
 using namespace Rcpp;
 
-// rwme
-NumericMatrix rwme(double sigma, double xo, int N);
-RcppExport SEXP _SC19013_rwme(SEXP sigmaSEXP, SEXP xoSEXP, SEXP NSEXP) {
+// randomwalkC
+NumericMatrix randomwalkC(double sigma, double x0, int N);
+RcppExport SEXP _SC19013_randomwalkC(SEXP sigmaSEXP, SEXP x0SEXP, SEXP NSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
-    Rcpp::traits::input_parameter< double >::type xo(xoSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
     Rcpp::traits::input_parameter< int >::type N(NSEXP);
-    rcpp_result_gen = Rcpp::wrap(rwme(sigma, xo, N));
+    rcpp_result_gen = Rcpp::wrap(randomwalkC(sigma, x0, N));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_SC19013_rwme", (DL_FUNC) &_SC19013_rwme, 3},
+    {"_SC19013_randomwalkC", (DL_FUNC) &_SC19013_randomwalkC, 3},
     {NULL, NULL, 0}
 };
 
